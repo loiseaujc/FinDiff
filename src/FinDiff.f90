@@ -60,30 +60,30 @@ contains
 
    module procedure central_findiff
    integer(ilp) :: i, n, nth_
-   !> Number of points in the stencil.
-   n = order + 1
    !> Order of the derivative.
    nth_ = optval(nth, 1)
+   !> Number of points in the stencil.
+   n = order + nth_
    !> Finite-difference weights
    weights = taylor_optimized_findiff([(i, i=(-n + 1)/2, (n - 1)/2)], nth_)
    end procedure central_findiff
 
    module procedure backward_findiff
    integer(ilp) :: i, n, nth_
-   !> Number of points in the stencil.
-   n = order + 1
    !> Order of the derivative.
    nth_ = optval(nth, 1)
+   !> Number of points in the stencil.
+   n = order + nth_
    !> Finite-difference weights.
    weights = taylor_optimized_findiff([(i, i=-n + 1, 0)], nth_)
    end procedure backward_findiff
 
    module procedure forward_findiff
    integer(ilp) :: i, n, nth_
-   !> Number of points in the stencil.
-   n = order + 1
    !> Order of the derivative.
    nth_ = optval(nth, 1)
+   !> Number of points in the stencil.
+   n = order + nth_
    !> Finite-difference weights.
    weights = taylor_optimized_findiff([(i, i=0, n - 1)], nth_)
    end procedure forward_findiff
