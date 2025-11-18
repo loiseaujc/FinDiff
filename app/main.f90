@@ -1,6 +1,7 @@
 program main
    use FinDiff
    implicit none
+   integer(ilp), parameter :: nth = 1
    integer(ilp) :: order
    real(qp), allocatable :: weights(:)
 
@@ -9,7 +10,7 @@ program main
    !-----------------------------------------------------
 
    do order = 2, 8, 2
-      weights = central_findiff(order, nth=1)
+      weights = central_findiff(order, nth=2)
       print *, "Central finite difference scheme for the first derivative"
       print *, "     - Order  :", order
       print *, "     - Stencil:", weights
@@ -21,7 +22,7 @@ program main
    !------------------------------------------------------
 
    do order = 1, 4
-      weights = backward_findiff(order, nth=1)
+      weights = backward_findiff(order, nth=nth)
       print *, "Backward finite difference scheme for the first derivative"
       print *, "    - Order  :", order
       print *, "    - Stencil:", weights
@@ -33,7 +34,7 @@ program main
    !-----------------------------------------------------
 
    do order = 1, 4
-      weights = forward_findiff(order, nth=1)
+      weights = forward_findiff(order, nth=nth)
       print *, "Forward finite difference scheme for the first derivative"
       print *, "    - Order  :", order
       print *, "    - Stencil:", weights
