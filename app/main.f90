@@ -10,10 +10,11 @@ program main
    !-----------------------------------------------------
 
    do order = 2, 8, 2
-      weights = central_findiff(order, nth=2)
-      print *, "Central finite difference scheme for the first derivative"
-      print *, "     - Order  :", order
-      print *, "     - Stencil:", weights
+      weights = central_findiff(order, nth=nth)
+      print *, "Central finite difference scheme"
+      print *, "     - Derivative order:", nth
+      print *, "     - Accuracy        :", order
+      print *, "     - Stencil         :", weights
       print *, ""
    end do
 
@@ -23,9 +24,10 @@ program main
 
    do order = 1, 4
       weights = backward_findiff(order, nth=nth)
-      print *, "Backward finite difference scheme for the first derivative"
-      print *, "    - Order  :", order
-      print *, "    - Stencil:", weights
+      print *, "Backward finite difference scheme"
+      print *, "     - Derivative order:", nth
+      print *, "     - Accuracy        :", order
+      print *, "     - Stencil         :", weights
       print *, ""
    end do
 
@@ -35,9 +37,10 @@ program main
 
    do order = 1, 4
       weights = forward_findiff(order, nth=nth)
-      print *, "Forward finite difference scheme for the first derivative"
-      print *, "    - Order  :", order
-      print *, "    - Stencil:", weights
+      print *, "Forward finite difference scheme"
+      print *, "     - Derivative order:", nth
+      print *, "     - Accuracy        :", order
+      print *, "     - Stencil         :", weights
       print *, ""
    end do
 
