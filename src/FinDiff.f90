@@ -1,9 +1,9 @@
 module FinDiff
-   use kinds
+   use kinds, only: ilp, dp, qp
    use linalg, only: vandermonde
    use stdlib_optval, only: optval
    use stdlib_linalg, only: solve
-   implicit none
+   implicit none(type, external)
    private
 
    public :: ilp, dp, qp
@@ -14,24 +14,28 @@ module FinDiff
 
    interface
       module function central_findiff(order, nth) result(weights)
+         implicit none(type, external)
          integer(ilp), intent(in) :: order
          integer(ilp), optional, intent(in) :: nth
          real(qp), allocatable :: weights(:)
       end function central_findiff
 
       module function backward_findiff(order, nth) result(weights)
+         implicit none(type, external)
          integer(ilp), intent(in) :: order
          integer(ilp), optional, intent(in) :: nth
          real(qp), allocatable :: weights(:)
       end function backward_findiff
 
       module function forward_findiff(order, nth) result(weights)
+         implicit none(type, external)
          integer(ilp), intent(in) :: order
          integer(ilp), optional, intent(in) :: nth
          real(qp), allocatable :: weights(:)
       end function forward_findiff
 
       module function taylor_optimized_findiff(stencil, nth) result(weights)
+         implicit none(type, external)
          integer(ilp), intent(in) :: stencil(:)
          integer(ilp), intent(in) :: nth
          real(qp), allocatable :: weights(:)

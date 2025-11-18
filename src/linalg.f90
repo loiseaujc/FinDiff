@@ -1,6 +1,6 @@
 module linalg
    use stdlib_optval, only: optval
-   use kinds
+   use kinds, only: ilp, qp
    implicit none(type, external)
    private
 
@@ -8,6 +8,7 @@ module linalg
 
    interface
       module function vandermonde(x, order) result(A)
+         implicit none(type, external)
          real(qp), intent(in) :: x(:)
          integer(ilp), intent(in), optional :: order
          real(qp), allocatable :: A(:, :)
@@ -23,5 +24,5 @@ contains
    do concurrent(i=1:n, j=1:order_)
       A(i, j) = x(i)**(j - 1)
    end do
-   end procedure
+   end procedure vandermonde
 end module linalg
