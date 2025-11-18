@@ -18,4 +18,4 @@ implicit-external = false
 source-form = "free"
 [dependencies]
 stdlib = {path="local_deps/stdlib128"}
-
+assert = {git="https://github.com/BerkeleyLab/assert.git"}

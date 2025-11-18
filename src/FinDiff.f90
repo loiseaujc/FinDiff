@@ -3,6 +3,7 @@ module FinDiff
    use linalg, only: vandermonde
    use stdlib_optval, only: optval
    use stdlib_linalg, only: solve
+   use assert_m, only: assert => assert_always
    implicit none(type, external)
    private
 
@@ -55,6 +56,11 @@ contains
 
    module procedure taylor_optimized_findiff
    real(qp), allocatable :: A(:, :), b(:)
+   !> Assertions.
+   call assert(assertion=nth > 0, &
+               description="The order of the derivative needs to be positive.")
+   call assert(assertion=size(stencil) > nth, &
+               description="The size of the stencil needs to be strictly greater than the order of the derivative.")
    !> Linear system.
    A = transpose(vandermonde(real(stencil, kind=qp)))
    allocate (b(size(A, 1)), source=0.0_qp); b(nth + 1) = factorial(nth)
@@ -70,6 +76,8 @@ contains
    n = order + nth_
    !> Finite-difference weights
    weights = taylor_optimized_findiff([(i, i=(-n + 1)/2, (n - 1)/2)], nth_)
+   !> Ensure machine-precision anti-symmetry.
+   weights = (weights - weights(n:1:-1))/2
    end procedure central_findiff
 
    module procedure backward_findiff
