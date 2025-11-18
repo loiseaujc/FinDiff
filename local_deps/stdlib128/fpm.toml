@@ -1,0 +1,18 @@
+name = "stdlib"
+version = "VERSION"
+license = "MIT"
+author = "stdlib contributors"
+maintainer = "@fortran-lang/stdlib"
+copyright = "2019-2024 stdlib contributors"
+
+[install]
+library = true
+
+[dev-dependencies]
+test-drive.git = "https://github.com/fortran-lang/test-drive"
+test-drive.tag = "v0.4.0"
+
+[preprocess]
+[preprocess.cpp]
+suffixes = [".F90", ".f90"]
+macros = ["MAXRANK=7"]

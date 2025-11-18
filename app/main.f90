@@ -2,7 +2,7 @@ program main
    use FinDiff
    implicit none
    integer(ilp) :: order
-   real(wp), allocatable :: weights(:)
+   real(qp), allocatable :: weights(:)
 
    !-----------------------------------------------------
    !-----     Central Finite Difference Schemes     -----

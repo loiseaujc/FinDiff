@@ -6,7 +6,7 @@ module FinDiff
    implicit none
    private
 
-   public :: ilp, wp
+   public :: ilp, dp, qp
    public :: taylor_optimized_findiff
    public :: central_findiff
    public :: backward_findiff
@@ -16,25 +16,25 @@ module FinDiff
       module function central_findiff(order, nth) result(weights)
          integer(ilp), intent(in) :: order
          integer(ilp), optional, intent(in) :: nth
-         real(wp), allocatable :: weights(:)
+         real(qp), allocatable :: weights(:)
       end function central_findiff
 
       module function backward_findiff(order, nth) result(weights)
          integer(ilp), intent(in) :: order
          integer(ilp), optional, intent(in) :: nth
-         real(wp), allocatable :: weights(:)
+         real(qp), allocatable :: weights(:)
       end function backward_findiff
 
       module function forward_findiff(order, nth) result(weights)
          integer(ilp), intent(in) :: order
          integer(ilp), optional, intent(in) :: nth
-         real(wp), allocatable :: weights(:)
+         real(qp), allocatable :: weights(:)
       end function forward_findiff
 
       module function taylor_optimized_findiff(stencil, nth) result(weights)
          integer(ilp), intent(in) :: stencil(:)
          integer(ilp), intent(in) :: nth
-         real(wp), allocatable :: weights(:)
+         real(qp), allocatable :: weights(:)
       end function taylor_optimized_findiff
    end interface
 
@@ -50,10 +50,10 @@ contains
    end function factorial
 
    module procedure taylor_optimized_findiff
-   real(wp), allocatable :: A(:, :), b(:)
+   real(qp), allocatable :: A(:, :), b(:)
    !> Linear system.
-   A = transpose(vandermonde(real(stencil, kind=wp)))
-   allocate (b(size(A, 1)), source=0.0_wp); b(nth + 1) = factorial(nth)
+   A = transpose(vandermonde(real(stencil, kind=qp)))
+   allocate (b(size(A, 1)), source=0.0_qp); b(nth + 1) = factorial(nth)
    !> Finite-difference weights.
    weights = solve(A, b)
    end procedure taylor_optimized_findiff
