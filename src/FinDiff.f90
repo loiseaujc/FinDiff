@@ -49,9 +49,13 @@ contains
       integer(ilp), intent(in) :: n
       integer(ilp) :: i
       out = 1
-      do i = 1, n
-         out = i*out
-      end do
+      if ((n == 0) .or. (n == 1)) then
+         return
+      else
+         do i = 2, n
+            out = i*out
+         end do
+      end if
    end function factorial
 
    module procedure taylor_optimized_findiff
