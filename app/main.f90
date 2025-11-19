@@ -1,47 +1,18 @@
 program main
    use FinDiff
+   use stdlib_io_npy, only: save_npy
    implicit none
    integer(ilp), parameter :: nth = 1
-   integer(ilp) :: order
-   real(qp), allocatable :: weights(:)
+   integer(ilp), parameter :: order = 2
+   integer(ilp), parameter :: npts = order + 1
+   integer(ilp) :: i
+   real(qp), allocatable :: weights(:), kappa(:)
+   integer(ilp), allocatable :: stencil(:)
 
-   !-----------------------------------------------------
-   !-----     Central Finite Difference Schemes     -----
-   !-----------------------------------------------------
-
-   do order = 2, 8, 2
-      weights = central_findiff(order, nth=nth)
-      print *, "Central finite difference scheme"
-      print *, "     - Derivative order:", nth
-      print *, "     - Accuracy        :", order
-      print *, "     - Stencil         :", weights
-      print *, ""
-   end do
-
-   !------------------------------------------------------
-   !-----     Backward Finite Difference Schemes     -----
-   !------------------------------------------------------
-
-   do order = 1, 4
-      weights = backward_findiff(order, nth=nth)
-      print *, "Backward finite difference scheme"
-      print *, "     - Derivative order:", nth
-      print *, "     - Accuracy        :", order
-      print *, "     - Stencil         :", weights
-      print *, ""
-   end do
-
-   !-----------------------------------------------------
-   !-----     Forward Finite Difference Schemes     -----
-   !-----------------------------------------------------
-
-   do order = 1, 4
-      weights = forward_findiff(order, nth=nth)
-      print *, "Forward finite difference scheme"
-      print *, "     - Derivative order:", nth
-      print *, "     - Accuracy        :", order
-      print *, "     - Stencil         :", weights
-      print *, ""
-   end do
+   !> Central Finite Difference Scheme.
+   weights = central_findiff(order=order, nth=nth)
+   stencil = [(i, i=(-npts + 1)/2, (npts - 1)/2)]
+   kappa = effective_wavenumber(stencil, weights)
+   call save_npy("wavenumber.npy", real(kappa, kind=dp))
 
 end program main

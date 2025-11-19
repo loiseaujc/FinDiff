@@ -13,6 +13,8 @@ module FinDiff
    public :: central_findiff
    public :: backward_findiff
    public :: forward_findiff
+   !> Analysis/Diagnostics.
+   public :: effective_wavenumber
 
    !-------------------------------------------------------
    !-----     STANDARD FINITE DIFFERENCES SCHEMES     -----
@@ -46,6 +48,19 @@ module FinDiff
          integer(ilp), intent(in) :: nth
          real(qp), allocatable :: weights(:)
       end function taylor_optimized_findiff
+   end interface
+
+   !---------------------------------------
+   !-----     ANALYSIS/DIAGNOSTIC     -----
+   !---------------------------------------
+
+   interface
+      pure module function effective_wavenumber(stencil, weights) result(kappa)
+         implicit none(type, external)
+         integer(ilp), intent(in) :: stencil(:)
+         real(qp), intent(in) :: weights(:)
+         real(qp), allocatable :: kappa(:)
+      end function effective_wavenumber
    end interface
 
 end module FinDiff
