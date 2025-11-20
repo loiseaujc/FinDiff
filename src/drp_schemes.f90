@@ -17,8 +17,8 @@ contains
       integer(ilp), intent(in) :: order
       integer(ilp), intent(in) :: nth
       real(qp), intent(in) :: kmin, kmax
-      real(qp), allocatable, intent(out) :: P(:, :), q(:)
-      real(qp), allocatable, intent(out) :: A(:, :), b(:)
+      complex(qp), allocatable, intent(out) :: P(:, :), q(:)
+      complex(qp), allocatable, intent(out) :: A(:, :), b(:)
       !> Internal variables.
       integer(ilp) :: i, j, k, npts
 

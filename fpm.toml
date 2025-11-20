@@ -19,3 +19,5 @@ source-form = "free"
 [dependencies]
 stdlib = {path="local_deps/stdlib128"}
 assert = {git="https://github.com/BerkeleyLab/assert.git"}
+[dev-dependencies]
+test-drive = { git = "https://github.com/fortran-lang/test-drive"}

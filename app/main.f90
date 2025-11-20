@@ -12,7 +12,8 @@ program main
    !> Central Finite Difference Scheme.
    weights = central_findiff(order=order, nth=nth)
    stencil = [(i, i=(-npts + 1)/2, (npts - 1)/2)]
-   kappa = effective_wavenumber(stencil, weights)
-   call save_npy("wavenumber.npy", real(kappa, kind=dp))
+   print *, "Consistency conditions:"
+   print *, "    - sum(a_j) :", sum(weights)
+   print *, "    - sum(j a_j):", sum(stencil*weights)
 
 end program main

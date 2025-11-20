@@ -1,7 +1,7 @@
 module FinDiff_utils
    use stdlib_optval, only: optval
    use stdlib_linalg, only: hermitian, solve
-   use FinDiff_kinds, only: ilp, qp
+   use FinDiff_kinds, only: ilp, dp, qp
    use assert_m, only: assert => assert_always
    implicit none(type, external)
    private
@@ -79,7 +79,7 @@ contains
    allocate (f(m + n), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
    !> Create the KKT system.
    K(:m, :m) = P; K(:m, m + 1:) = hermitian(A); f(:m) = q
-   K(m + 1:, :n) = A; f(m + 1:) = b
+   K(m + 1:, :m) = A; f(m + 1:) = b
    !> Solve linear system.
    x = solve(K, f)
    !> Discard the last n entries corresponding to the Lagrange multipliers.
