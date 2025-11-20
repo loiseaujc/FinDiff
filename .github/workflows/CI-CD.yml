@@ -1,0 +1,100 @@
+name: CI/CD
+
+on: [push]
+  # push:
+    # branches: [main, master, dev]
+
+permissions:
+  contents: write
+
+jobs:
+
+  # Run FPM tests (debug + release) on all OS/compiler combinations
+  test_fpm:
+    name: ${{ matrix.os }}_${{ matrix.compiler }}_fpm
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            compiler: gfortran
+            compiler-version: 13.3.0
+            flag-debug: "-Wno-external-argument-mismatch -coverage"
+            extra-packages: "lcov"
+          - os: ubuntu-latest
+            compiler: ifx
+            compiler-version: 2025.2.1
+            extra-packages: ""
+
+    steps:
+      - name: Setup Fortran
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          compiler: ${{ matrix.compiler }}
+          compiler-version: ${{ matrix.compiler-version }}
+          platform: ${{ matrix.os }}
+          extra-packages: ${{ matrix.extra-packages }}
+
+      - name: fpm test (debug)
+        run: |
+          fpm build --compiler ${{ matrix.compiler }} --profile debug --flag "${{ matrix.flag-debug }}" --verbose --show-model
+          fpm test --compiler ${{ matrix.compiler }} --profile debug --flag "${{ matrix.flag-debug }}" --verbose
+
+      - name: Create coverage report
+        if: contains( matrix.os, 'ubuntu') && contains( matrix.compiler, 'gfortran')
+        run: |
+          mkdir -p ${{ env.COV_DIR }}
+          mv ./build/gfortran_*/*/* ${{ env.COV_DIR }}
+          lcov --capture --initial --base-directory . --directory ${{ env.COV_DIR }} --output-file ${{ env.COV_DIR }}/coverage.base
+          lcov --capture           --base-directory . --directory ${{ env.COV_DIR }} --output-file ${{ env.COV_DIR }}/coverage.capture
+          lcov --add-tracefile ${{ env.COV_DIR }}/coverage.base --add-tracefile ${{ env.COV_DIR }}/coverage.capture --output-file ${{ env.COV_DIR }}/coverage.info
+        env:
+          COV_DIR: build/coverage
+
+      - name: Upload coverage report
+        if: contains( matrix.os, 'ubuntu') && contains( matrix.compiler, 'gfortran')
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/coverage/coverage.info
+          verbose: true
+
+  # Build and deploy FORD documentation
+  # doc_ford:
+  #   name: Generate FORD Documentation
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Setup and Generate FORD Documentation
+  #       uses: gha3mi/setup-fortran-conda@latest
+  #       with:
+  #         compiler: gfortran
+  #         generate-doc-ford: true
+  #         ford-working-directory: .
+  #         ford-config: API-doc-FORD-file.md
+  #         ford-output-directory: API-doc
+  #         ford-branch: gh-pages-ford
+  #         ford-target-folder: API-doc
+
+  # Generate STATUS.md from FPM job results
+  status_fpm:
+    name: Generate STATUS.md
+    if: always()
+    needs: test_fpm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate summary
+        uses: gha3mi/setup-fortran-conda@latest
+        with:
+          generate-status-fpm: true
+
+  # Run Fortran linter with Fortitude
+  # linter_fortitude:
+  #   name: Run Fortitude Linter
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Run Fortitude Linter
+  #       uses: gha3mi/setup-fortran-conda@latest
+  #       with:
+  #         fortitude-check: true
+  #         fortitude-settings: "--quiet --output-format github"
