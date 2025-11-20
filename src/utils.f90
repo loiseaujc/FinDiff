@@ -16,10 +16,10 @@ module FinDiff_utils
          integer(ilp), intent(in) :: n
       end function factorial
 
-      module function vandermonde(x, order) result(A)
+      module function vandermonde(x, n) result(A)
          implicit none(type, external)
          real(qp), intent(in) :: x(:)
-         integer(ilp), intent(in), optional :: order
+         integer(ilp), intent(in), optional :: n
          real(qp), allocatable :: A(:, :)
       end function vandermonde
 
@@ -34,14 +34,14 @@ module FinDiff_utils
 contains
 
    module procedure vandermonde
-   integer(ilp) :: i, j, n, order_
+   integer(ilp) :: i, j, m, n_
    !> System's dimensions.
-   n = size(x); order_ = optval(order, n)
-   call assert(assertion=n >= 0, &
-               description="The power needs to be non-negative.")
+   m = size(x); n_ = optval(n, m)
+   call assert(assertion=n_ >= 0, &
+               description="The number of columns needs to be positive.")
    !> Allocate matrix.
-   allocate (A(n, order_), source=0.0_qp)
-   do concurrent(i=1:n, j=1:order_)
+   allocate (A(m, n_), source=0.0_qp)
+   do concurrent(i=1:m, j=1:n_)
       A(i, j) = x(i)**(j - 1)
    end do
    end procedure vandermonde

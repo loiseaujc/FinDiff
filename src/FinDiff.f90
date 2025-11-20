@@ -10,6 +10,8 @@ module FinDiff
    public :: central_findiff
    public :: backward_findiff
    public :: forward_findiff
+   !> Dispersion-Relation-Preserving finite differences schemes.
+   public :: central_drp_findiff
    !> Analysis/Diagnostics.
    public :: effective_wavenumber
 
@@ -56,11 +58,11 @@ module FinDiff
    !----------------------------------------------------------
 
    interface
-      module function central_drp_findiff(order, npts, nth, kmin, kmax) result(weights)
+      module function central_drp_findiff(order, npts, nth, alpha_max) result(weights)
          integer(ilp), intent(in) :: order
          integer(ilp), intent(in) :: npts
          integer(ilp), optional, intent(in) :: nth
-         real(qp), optional, intent(in) :: kmin, kmax
+         real(qp), optional, intent(in) :: alpha_max
          real(qp), allocatable :: weights(:)
       end function central_drp_findiff
    end interface
