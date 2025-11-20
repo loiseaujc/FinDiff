@@ -6,8 +6,6 @@ contains
 
    module procedure effective_wavenumber
    integer(ilp), parameter :: npts = 1024
-   real(qp), parameter :: pi = 4.0_qp*atan(1.0_qp)
-   complex(qp), parameter :: im = cmplx(0.0_qp, 1.0_qp, kind=qp)
    real(qp), allocatable :: kappa_true(:)
    integer(ilp) :: i
    !> True wavenumbers.

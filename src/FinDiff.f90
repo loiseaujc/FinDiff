@@ -1,8 +1,5 @@
 module FinDiff
    use FinDiff_kinds, only: ilp, dp, qp
-   use FinDiff_utils, only: vandermonde, factorial
-   use stdlib_optval, only: optval
-   use stdlib_linalg, only: solve
    use assert_m, only: assert => assert_always
    implicit none(type, external)
    private
@@ -15,6 +12,10 @@ module FinDiff
    public :: forward_findiff
    !> Analysis/Diagnostics.
    public :: effective_wavenumber
+
+   !> Constants.
+   real(qp), parameter :: pi = 4.0_qp*atan(1.0_qp)
+   complex(qp), parameter :: im = cmplx(0.0_qp, 1.0_qp, kind=qp)
 
    !-------------------------------------------------------
    !-----     STANDARD FINITE DIFFERENCES SCHEMES     -----
@@ -48,6 +49,20 @@ module FinDiff
          integer(ilp), intent(in) :: nth
          real(qp), allocatable :: weights(:)
       end function taylor_optimized_findiff
+   end interface
+
+   !----------------------------------------------------------
+   !-----     DISPERSION-RELATION-PRESERVING SCHEMES     -----
+   !----------------------------------------------------------
+
+   interface
+      module function central_drp_findiff(order, npts, nth, kmin, kmax) result(weights)
+         integer(ilp), intent(in) :: order
+         integer(ilp), intent(in) :: npts
+         integer(ilp), optional, intent(in) :: nth
+         real(qp), optional, intent(in) :: kmin, kmax
+         real(qp), allocatable :: weights(:)
+      end function central_drp_findiff
    end interface
 
    !---------------------------------------

@@ -1,4 +1,7 @@
 submodule(FinDiff) standard_schemes
+   use stdlib_optval, only: optval
+   use stdlib_linalg, only: solve
+   use FinDiff_utils, only: vandermonde, factorial
    implicit none(type, external)
 contains
    module procedure taylor_optimized_findiff
