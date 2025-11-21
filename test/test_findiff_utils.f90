@@ -73,7 +73,7 @@ program test_utils
 
    stat = 0
 
-   testsuites = [new_testsuite("dct", collect_test_utils)]
+   testsuites = [new_testsuite("Utilities", collect_test_utils)]
 
    do is = 1, size(testsuites)
       write (error_unit, fmt) "Testing:", testsuites(is)%name
