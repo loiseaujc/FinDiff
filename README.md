@@ -14,6 +14,27 @@ Modern Fortran utility to generate optimized finite-differences schemes
 
 ### Description
 
+### Building FinDiff
+
+`FinDiff` can be built with the [Fortran Package Manager](https://github.com/fortran-lang/fpm) `fpm` using the provided `fpm.toml` like so:
+
+```bash
+fpm build --release
+```
+
+Only quadrapule precision (`real128`) is currently supported. To use `FinDiff` within your `fpm` project, add the following line to your `fpm.toml` file:
+
+```toml
+[dependencies]
+FinDiff = {git="https://github.com/loiseaujc/FinDiff.git"}
+```
+
+### Example
+
+### Licence
+
+### Similar projects
+
 ### References
 
 - K. Kumari, R. Bhattacharya and D. A. Donzis. *A unified approach for deriving optimal finite differences.* Journal of Computational Physics, vol. 399, 2019. [[PDF](https://arxiv.org/pdf/1908.02890)]
