@@ -11,7 +11,7 @@ contains
    !> True wavenumbers.
    kappa_true = linspace(0.0_qp, pi, npts)
    !> Effective wavenumbers.
-   kappa = imag(sum(matmul(diag(weights), &
-                           exp(im*outer_product(real(stencil, kind=qp), kappa_true))), dim=1))
+
+   kappa = -real(matmul(exp(im*outer_product(kappa_true, real(stencil, kind=qp))), weights))
    end procedure effective_wavenumber
 end submodule analysis

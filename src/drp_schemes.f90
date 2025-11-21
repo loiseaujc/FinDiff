@@ -34,8 +34,8 @@ contains
       npts = size(stencil)  ! Number of points in the stencil.
 
       !> Assertions.
-      call assert(assertion=nth == 1, &
-                  description="Only first order derivatives are supported for now.")
+      call assert(assertion=nth <= 2, &
+                  description="Only first and second order derivatives are supported for now.")
       call assert(assertion=order > 0, &
                   description="The order of the approximation needs to be strictly positive.")
       call assert(assertion=all(stencil == -stencil(npts:1:-1)), &
@@ -49,9 +49,10 @@ contains
       P = construct_P(stencil, alpha_max)
       q = construct_q(stencil, nth, alpha_max)
       !> Constraints.
-      A = cmplx(transpose(vandermonde(real(stencil, kind=qp), n=nth + order)), 0.0_qp, kind=qp)
+      A = cmplx(transpose(vandermonde(real(stencil, kind=qp), n=order + 1)), 0.0_qp, kind=qp)
       allocate (b(size(A, 1)), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
       b(nth + 1) = factorial(nth)
+      print *, size(A, 1), size(A, 2)
    end subroutine construct_quadprog
 
    function construct_P(stencil, alpha_max) result(P)
@@ -75,7 +76,7 @@ contains
       end do
    end function construct_P
 
-   pure function construct_q(stencil, nth, alpha_max) result(q)
+   function construct_q(stencil, nth, alpha_max) result(q)
       integer(ilp), intent(in) :: stencil(:)
       integer(ilp), intent(in) :: nth
       real(qp), intent(in) :: alpha_max
@@ -84,13 +85,26 @@ contains
       !> Allocate array.
       npts = size(stencil)
       allocate (q(npts), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
-      do concurrent(i=1:npts, stencil(i) /= 0)
-         k = stencil(i)
-         if (k == 0) then
-            q(i) = 0.0_qp
-         else
-            q(i) = 4*(sin(alpha_max*k) - alpha_max*k*cos(alpha_max*k))/k**2
-         end if
-      end do
+
+      select case (nth)
+      case (1)
+         do concurrent(i=1:npts)
+            k = stencil(i)
+            if (k == 0) then
+               q(i) = 0.0_qp
+            else
+               q(i) = 4*(sin(alpha_max*k) - alpha_max*k*cos(alpha_max*k))/k**2
+            end if
+         end do
+      case (2)
+         do concurrent(i=1:npts)
+            k = stencil(i)
+            if (k == 0) then
+               q(i) = -4.0_qp*alpha_max**3/3.0_qp
+            else
+               q(i) = -4.0_qp*((alpha_max**2*k**2 - 2)*sin(alpha_max*k) + 2*alpha_max*k*cos(alpha_max*k))/k**3
+            end if
+         end do
+      end select
    end function construct_q
 end submodule drp_schemes
