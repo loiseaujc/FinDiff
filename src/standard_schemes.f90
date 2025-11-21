@@ -20,7 +20,7 @@ contains
    !> Order of the derivative.
    nth_ = optval(nth, 1)
    !> Number of points in the stencil.
-   n = order + 1
+   n = 2*floor((nth_ + 1)/2.0_qp, kind=ilp) - 1 + order
    !> Finite-difference weights
    weights = taylor_optimized_findiff([(i, i=(-n + 1)/2, (n - 1)/2)], nth_)
    !> Ensure machine-precision (anti-)symmetry.
