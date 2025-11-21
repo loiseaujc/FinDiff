@@ -25,9 +25,9 @@ module FinDiff_utils
 
       module function constrained_quadprog(P, q, A, b) result(x)
          implicit none(type, external)
-         complex(qp), intent(in) :: P(:, :), q(:)
-         complex(qp), intent(in) :: A(:, :), b(:)
-         complex(qp), allocatable :: x(:)
+         real(qp), intent(in) :: P(:, :), q(:)
+         real(qp), intent(in) :: A(:, :), b(:)
+         real(qp), allocatable :: x(:)
       end function constrained_quadprog
    end interface
 
@@ -60,7 +60,7 @@ contains
 
    module procedure constrained_quadprog
    integer(ilp) :: m, n
-   complex(qp), allocatable :: K(:, :), f(:)
+   real(qp), allocatable :: K(:, :), f(:)
    !> Assertions.
    call assert(assertion=size(P, 1) == size(P, 2), &
                description="Matrix P needs to be square.")
@@ -75,8 +75,8 @@ contains
    !> Problem size.
    m = size(P, 1); n = size(A, 1)
    !> Allocate matrices for the KKT optimality conditions.
-   allocate (K(m + n, m + n), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
-   allocate (f(m + n), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
+   allocate (K(m + n, m + n), source=0.0_qp)
+   allocate (f(m + n), source=0.0_qp)
    !> Create the KKT system.
    K(:m, :m) = P; K(:m, m + 1:) = hermitian(A); f(:m) = q
    K(m + 1:, :m) = A; f(m + 1:) = b

@@ -72,10 +72,11 @@ module FinDiff
    !---------------------------------------
 
    interface
-      pure module function effective_wavenumber(stencil, weights) result(kappa)
+      pure module function effective_wavenumber(stencil, weights, nth) result(kappa)
          implicit none(type, external)
          integer(ilp), intent(in) :: stencil(:)
          real(qp), intent(in) :: weights(:)
+         integer(ilp), optional, intent(in) :: nth
          real(qp), allocatable :: kappa(:)
       end function effective_wavenumber
    end interface

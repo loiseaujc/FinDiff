@@ -8,8 +8,8 @@ contains
    module procedure central_drp_findiff
    integer(ilp) :: i, nth_, stencil(npts)
    real(qp) :: alpha_max_
-   complex(qp), allocatable :: P(:, :), q(:)
-   complex(qp), allocatable :: A(:, :), b(:)
+   real(qp), allocatable :: P(:, :), q(:)
+   real(qp), allocatable :: A(:, :), b(:)
    !> Optional arguments.
    nth_ = optval(nth, 1)
    alpha_max_ = optval(alpha_max, pi/2)
@@ -26,8 +26,8 @@ contains
       integer(ilp), intent(in) :: order
       integer(ilp), intent(in) :: nth
       real(qp), intent(in) :: alpha_max
-      complex(qp), allocatable, intent(out) :: P(:, :), q(:)
-      complex(qp), allocatable, intent(out) :: A(:, :), b(:)
+      real(qp), allocatable, intent(out) :: P(:, :), q(:)
+      real(qp), allocatable, intent(out) :: A(:, :), b(:)
       !> Internal variables.
       integer(ilp) :: i, j, k, npts
 
@@ -49,20 +49,19 @@ contains
       P = construct_P(stencil, alpha_max)
       q = construct_q(stencil, nth, alpha_max)
       !> Constraints.
-      A = cmplx(transpose(vandermonde(real(stencil, kind=qp), n=order + 1)), 0.0_qp, kind=qp)
-      allocate (b(size(A, 1)), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
+      A = transpose(vandermonde(real(stencil, kind=qp), n=order + 1))
+      allocate (b(size(A, 1)), source=0.0_qp)
       b(nth + 1) = factorial(nth)
-      print *, size(A, 1), size(A, 2)
    end subroutine construct_quadprog
 
    function construct_P(stencil, alpha_max) result(P)
       integer(ilp), intent(in) :: stencil(:)
       real(qp), intent(in) :: alpha_max
-      complex(qp), allocatable :: P(:, :)
+      real(qp), allocatable :: P(:, :)
       integer(ilp) :: i, j, npts, k
       !> Allocate array.
       npts = size(stencil)
-      allocate (P(npts, npts), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
+      allocate (P(npts, npts), source=0.0_qp)
       !> Hermitian Circulant matrix.
       do j = 1, npts
          do i = 1, npts
@@ -80,11 +79,11 @@ contains
       integer(ilp), intent(in) :: stencil(:)
       integer(ilp), intent(in) :: nth
       real(qp), intent(in) :: alpha_max
-      complex(qp), allocatable :: q(:)
+      real(qp), allocatable :: q(:)
       integer(ilp) :: i, k, npts
       !> Allocate array.
       npts = size(stencil)
-      allocate (q(npts), source=cmplx(0.0_qp, 0.0_qp, kind=qp))
+      allocate (q(npts), source=0.0_qp)
 
       select case (nth)
       case (1)
