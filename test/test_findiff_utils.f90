@@ -21,13 +21,13 @@ contains
       type(error_type), allocatable, intent(out) :: error
       integer(ilp), parameter :: m = 5, n = 4, p = 3
       !> Least-squares cost.
-      complex(qp) :: A(m, n), b(m)
+      real(qp) :: A(m, n), b(m)
       !> Corresponding quadratic form.
-      complex(qp) :: Q(n, n), r(n)
+      real(qp) :: Q(n, n), r(n)
       !> Equality constraints.
-      complex(qp) :: C(p, n), d(p)
+      real(qp) :: C(p, n), d(p)
       !> Solution.
-      complex(qp) :: x(n), x_true(n)
+      real(qp) :: x(n), x_true(n)
 
       !> Least-squares cost.
       A(1, :) = [1.0_qp, 1.0_qp, 1.0_qp, 1.0_qp]
@@ -49,8 +49,8 @@ contains
       x_true = [0.5_qp, -0.5_qp, 1.5_qp, 0.5_qp]
 
       !> Quadratic cost.
-      Q = matmul(hermitian(A), A)
-      r = matmul(hermitian(A), b)
+      Q = matmul(transpose(A), A)
+      r = matmul(transpose(A), b)
 
       !> Compute solution.
       x = constrained_quadprog(Q, r, C, d)
