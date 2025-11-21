@@ -17,7 +17,7 @@ contains
    stencil = [(i, i=(-npts + 1)/2, (npts - 1)/2)]
    !> Quadratic program.
    call construct_quadprog(stencil, order, nth_, alpha_max_, P, q, A, b)
-   weights = real(constrained_quadprog(P, q, A, b), kind=qp)
+   weights = constrained_quadprog(P, q, A, b)
    end procedure central_drp_findiff
 
    subroutine construct_quadprog(stencil, order, nth, alpha_max, P, q, A, b)
@@ -62,16 +62,10 @@ contains
       !> Allocate array.
       npts = size(stencil)
       allocate (P(npts, npts), source=0.0_qp)
-      !> Hermitian Circulant matrix.
-      do j = 1, npts
-         do i = 1, npts
-            k = stencil(i) + stencil(npts - j + 1)
-            if (k == 0) then
-               P(i, j) = 4*alpha_max
-            else
-               P(i, j) = 4*sin(alpha_max*k)/k
-            end if
-         end do
+      !> Symmetric Circulant matrix.
+      do concurrent(i=1:npts, j=1:npts)
+         k = stencil(i) + stencil(npts - j + 1)
+         P(i, j) = 4*merge(alpha_max, sin(alpha_max*k)/k, k == 0)
       end do
    end function construct_P
 
@@ -89,20 +83,14 @@ contains
       case (1)
          do concurrent(i=1:npts)
             k = stencil(i)
-            if (k == 0) then
-               q(i) = 0.0_qp
-            else
-               q(i) = 4*(sin(alpha_max*k) - alpha_max*k*cos(alpha_max*k))/k**2
-            end if
+            q(i) = merge(0.0_qp, &
+                         4*(sin(alpha_max*k) - alpha_max*k*cos(alpha_max*k))/k**2, k == 0)
          end do
       case (2)
          do concurrent(i=1:npts)
             k = stencil(i)
-            if (k == 0) then
-               q(i) = -4.0_qp*alpha_max**3/3.0_qp
-            else
-               q(i) = -4.0_qp*((alpha_max**2*k**2 - 2)*sin(alpha_max*k) + 2*alpha_max*k*cos(alpha_max*k))/k**3
-            end if
+            q(i) = -4*merge(alpha_max**3/3.0_qp, &
+                            ((alpha_max**2*k**2 - 2)*sin(alpha_max*k) + 2*alpha_max*k*cos(alpha_max*k))/k**3, k == 0)
          end do
       end select
    end function construct_q

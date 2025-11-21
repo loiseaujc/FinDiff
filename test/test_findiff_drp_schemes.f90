@@ -15,7 +15,7 @@ contains
    subroutine collect_test_drp_schemes(testsuite)
       type(unittest_type), allocatable, intent(out) :: testsuite(:)
       testsuite = [new_unittest("Tam & Webb (1993)", test_tam_webb_scheme)]
-      testsuite = [testsuite, new_unittest("Donzis (2020)", test_donzis_schemes)]
+      testsuite = [testsuite, new_unittest("Donzis (2019)", test_donzis_schemes)]
    end subroutine collect_test_drp_schemes
 
    subroutine test_tam_webb_scheme(error)
