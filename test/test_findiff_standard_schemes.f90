@@ -10,11 +10,12 @@ contains
    subroutine collect_test_standard_schemes(testsuite)
       type(unittest_type), allocatable, intent(out) :: testsuite(:)
       testsuite = [new_unittest("Standard central schemes", test_central_schemes)]
+      testsuite = [testsuite, new_unittest("Standard forward schemes", test_forward_findiff)]
+      testsuite = [testsuite, new_unittest("Standard backward schemes", test_backward_findiff)]
    end subroutine collect_test_standard_schemes
 
    subroutine test_central_schemes(error)
       type(error_type), allocatable, intent(out) :: error
-      integer(ilp) :: i, order
       real(qp), allocatable :: weights(:)
 
       !------------------------------------
@@ -58,7 +59,7 @@ contains
          real(qp), parameter :: weights_7pts_6order(7) = [1.0_qp/90.0_qp, -3.0_qp/20.0_qp, 1.5_qp, -49.0_qp/18.0_qp, &
                                                           1.5_qp, -3.0_qp/20.0_qp, 1.0_qp/90.0_qp]
          real(qp), parameter :: weights_9pts_8order(9) = [-1.0_qp/560.0_qp, 8.0_qp/315.0_qp, -0.2_qp, 8.0_qp/5.0_qp, &
-                                                         -205_qp/72.0_qp, 8.0_qp/5.0_qp, -0.2_qp, 8.0_qp/315.0_qp, -1.0_qp/560.0_qp]
+                                                       -205.0_qp/72.0_qp, 8.0_qp/5.0_qp, -0.2_qp, 8.0_qp/315.0_qp, -1.0_qp/560.0_qp]
 
          !> Second-order accurate scheme.
          weights = central_findiff(order=2, nth=2)
@@ -107,6 +108,169 @@ contains
          if (allocated(error)) return
       end block
    end subroutine test_central_schemes
+
+   subroutine test_forward_findiff(error)
+      type(error_type), allocatable, intent(out) :: error
+      real(qp), allocatable :: weights(:)
+
+      !------------------------------------
+      !-----     FIRST DERIVATIVE     -----
+      !------------------------------------
+      block
+         real(qp), parameter :: weights_2pts_1order(2) = [-1.0_qp, 1.0_qp]
+         real(qp), parameter :: weights_3pts_2order(3) = [-1.5_qp, 2.0_qp, -0.5_qp]
+         real(qp), parameter :: weights_4pts_3order(4) = [-11.0_qp/6.0_qp, 3.0_qp, -1.5_qp, 1.0_qp/3.0_qp]
+
+         !> First-order accurate scheme.
+         weights = forward_findiff(order=1, nth=1)
+         call check(error, all_close(weights, weights_2pts_1order))
+         if (allocated(error)) return
+
+         !> Second-order accurate scheme.
+         weights = forward_findiff(order=2, nth=1)
+         call check(error, all_close(weights, weights_3pts_2order))
+
+         !> Third-order accurate scheme.
+         weights = forward_findiff(order=3, nth=1)
+         call check(error, all_close(weights, weights_4pts_3order))
+         if (allocated(error)) return
+      end block
+
+      !-------------------------------------
+      !-----     SECOND DERIVATIVE     -----
+      !-------------------------------------
+      block
+         real(qp), parameter :: weights_3pts_order1(3) = [1.0_qp, -2.0_qp, 1.0_qp]
+         real(qp), parameter :: weights_4pts_order2(4) = [2.0_qp, -5.0_qp, 4.0_qp, -1.0_qp]
+         real(qp), parameter :: weights_5pts_order3(5) = [35.0_qp/12.0_qp, -26.0_qp/3.0_qp, 19.0_qp/2.0_qp, &
+                                                          -14.0_qp/3.0_qp, 11.0_qp/12.0_qp]
+
+         !> First-order accurate scheme.
+         weights = forward_findiff(order=1, nth=2)
+         call check(error, all_close(weights, weights_3pts_order1))
+         if (allocated(error)) return
+
+         !> Second-order accurate scheme.
+         weights = forward_findiff(order=2, nth=2)
+         call check(error, all_close(weights, weights_4pts_order2))
+         if (allocated(error)) return
+
+         !> Third-order accurate scheme.
+         weights = forward_findiff(order=3, nth=2)
+         call check(error, all_close(weights, weights_5pts_order3))
+         if (allocated(error)) return
+      end block
+
+      !------------------------------------
+      !-----     THIRD DERIVATIVE     -----
+      !------------------------------------
+      block
+         real(qp), parameter :: weights_4pts_1order(4) = [-1.0_qp, 3.0_qp, -3.0_qp, 1.0_qp]
+         real(qp), parameter :: weights_5pts_2order(5) = [-5.0_qp/2.0_qp, 9.0_qp, -12.0_qp, 7.0_qp, -1.5_qp]
+         real(qp), parameter :: weights_6pts_3order(6) = [-17.0_qp/4.0_qp, 71.0_qp/4.0_qp, -59.0_qp/2.0_qp, &
+                                                          49.0_qp/2.0_qp, -41.0_qp/4.0_qp, 7.0_qp/4.0_qp]
+
+         !> First-order accurate scheme.
+         weights = forward_findiff(order=1, nth=3)
+         call check(error, all_close(weights, weights_4pts_1order))
+         if (allocated(error)) return
+
+         !> Second-order accurate scheme.
+         weights = forward_findiff(order=2, nth=3)
+         call check(error, all_close(weights, weights_5pts_2order))
+         if (allocated(error)) return
+
+         !> Third-order accurate scheme.
+         weights = forward_findiff(order=3, nth=3)
+         call check(error, all_close(weights, weights_6pts_3order))
+         if (allocated(error)) return
+      end block
+   end subroutine test_forward_findiff
+
+   subroutine test_backward_findiff(error)
+      type(error_type), allocatable, intent(out) :: error
+      real(qp), allocatable :: weights(:)
+
+      !------------------------------------
+      !-----     FIRST DERIVATIVE     -----
+      !------------------------------------
+      block
+         real(qp), parameter :: weights_2pts_1order(2) = [-1.0_qp, 1.0_qp]
+         real(qp), parameter :: weights_3pts_2order(3) = [-1.5_qp, 2.0_qp, -0.5_qp]
+         real(qp), parameter :: weights_4pts_3order(4) = [-11.0_qp/6.0_qp, 3.0_qp, -1.5_qp, 1.0_qp/3.0_qp]
+
+         !> First-order accurate scheme.
+         weights = backward_findiff(order=1, nth=1)
+         call check(error, all_close(weights, -reverse(weights_2pts_1order)))
+         if (allocated(error)) return
+
+         !> Second-order accurate scheme.
+         weights = backward_findiff(order=2, nth=1)
+         call check(error, all_close(weights, -reverse(weights_3pts_2order)))
+
+         !> Third-order accurate scheme.
+         weights = backward_findiff(order=3, nth=1)
+         call check(error, all_close(weights, -reverse(weights_4pts_3order)))
+         if (allocated(error)) return
+      end block
+
+      !-------------------------------------
+      !-----     SECOND DERIVATIVE     -----
+      !-------------------------------------
+      block
+         real(qp), parameter :: weights_3pts_order1(3) = [1.0_qp, -2.0_qp, 1.0_qp]
+         real(qp), parameter :: weights_4pts_order2(4) = [2.0_qp, -5.0_qp, 4.0_qp, -1.0_qp]
+         real(qp), parameter :: weights_5pts_order3(5) = [35.0_qp/12.0_qp, -26.0_qp/3.0_qp, 19.0_qp/2.0_qp, &
+                                                          -14.0_qp/3.0_qp, 11.0_qp/12.0_qp]
+
+         !> First-order accurate scheme.
+         weights = backward_findiff(order=1, nth=2)
+         call check(error, all_close(weights, reverse(weights_3pts_order1)))
+         if (allocated(error)) return
+
+         !> Second-order accurate scheme.
+         weights = backward_findiff(order=2, nth=2)
+         call check(error, all_close(weights, reverse(weights_4pts_order2)))
+         if (allocated(error)) return
+
+         !> Third-order accurate scheme.
+         weights = backward_findiff(order=3, nth=2)
+         call check(error, all_close(weights, reverse(weights_5pts_order3)))
+         if (allocated(error)) return
+      end block
+
+      !------------------------------------
+      !-----     THIRD DERIVATIVE     -----
+      !------------------------------------
+      block
+         real(qp), parameter :: weights_4pts_1order(4) = [-1.0_qp, 3.0_qp, -3.0_qp, 1.0_qp]
+         real(qp), parameter :: weights_5pts_2order(5) = [-5.0_qp/2.0_qp, 9.0_qp, -12.0_qp, 7.0_qp, -1.5_qp]
+         real(qp), parameter :: weights_6pts_3order(6) = [-17.0_qp/4.0_qp, 71.0_qp/4.0_qp, -59.0_qp/2.0_qp, &
+                                                          49.0_qp/2.0_qp, -41.0_qp/4.0_qp, 7.0_qp/4.0_qp]
+
+         !> First-order accurate scheme.
+         weights = backward_findiff(order=1, nth=3)
+         call check(error, all_close(weights, -reverse(weights_4pts_1order)))
+         if (allocated(error)) return
+
+         !> Second-order accurate scheme.
+         weights = backward_findiff(order=2, nth=3)
+         call check(error, all_close(weights, -reverse(weights_5pts_2order)))
+         if (allocated(error)) return
+
+         !> Third-order accurate scheme.
+         weights = backward_findiff(order=3, nth=3)
+         call check(error, all_close(weights, -reverse(weights_6pts_3order)))
+         if (allocated(error)) return
+      end block
+   contains
+      pure function reverse(x) result(y)
+         real(qp), intent(in) :: x(:)
+         real(qp), allocatable :: y(:)
+         integer(ilp) :: i
+         y = x(size(x):1:-1)
+      end function reverse
+   end subroutine test_backward_findiff
 
 end module test_FinDiff_standard_schemes
 
