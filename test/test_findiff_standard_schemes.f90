@@ -1,4 +1,4 @@
-module test_FinDiff_standard_schemes
+module test_standard_schemes
    use stdlib_math, only: all_close
    use FinDiff
    use testdrive, only: new_unittest, unittest_type, error_type, check
@@ -272,12 +272,12 @@ contains
       end function reverse
    end subroutine test_backward_findiff
 
-end module test_FinDiff_standard_schemes
+end module test_standard_schemes
 
-program test_standard_schemes
+program tester
    use, intrinsic :: iso_fortran_env, only: error_unit
    use testdrive, only: run_testsuite, new_testsuite, testsuite_type
-   use test_FinDiff_standard_schemes, only: collect_test_standard_schemes
+   use test_standard_schemes, only: collect_test_standard_schemes
    implicit none
    integer :: stat, is
    type(testsuite_type), allocatable :: testsuites(:)
@@ -296,4 +296,4 @@ program test_standard_schemes
       write (error_unit, '(i0, 1x, a)') stat, "test(s) failed!"
       error stop
    end if
-end program test_standard_schemes
+end program tester
